@@ -21,6 +21,7 @@ import { COLORS, SIZES, icons } from "../../constants";
 import useFetch from "../../hook/useFetch";
 
 const JobDetails = () => {
+    const [activeTab, setActiveTab] = useState("About"); // [0, 1, 2
     const params = useSearchParams();
     const router = useRouter();
 
@@ -31,6 +32,26 @@ const JobDetails = () => {
     const [refreshing, setRefreshing] = useState(false);
 
     const onRefresh = () => {};
+
+    const tabs = ["About", "Qualifications", "Responsibilities"];
+
+    const displayTabContent = (
+        activeTab,
+        jobDescription,
+        jobQualifications,
+        jobResponsibilities
+    ) => {
+        switch (activeTab) {
+            case "About":
+                return <JobAbout info={jobDescription} />;
+            case "Qualifications":
+                return <Specifics title="Qualifications" points={jobQualifications} />;
+            case "Responsibilities":
+                return <Specifics title="Responsibilities" points={jobResponsibilities} />;
+            default:
+                break;
+        }
+    };
 
     return (
         <SafeAreaView
@@ -68,8 +89,6 @@ const JobDetails = () => {
                         <ActivityIndicator size="large" color={COLORS.primary} />
                     ) : error ? (
                         <Text>{error.message}</Text>
-                    ) : data.length === 0 ? (
-                        <Text>No data found</Text>
                     ) : (
                         <View
                             style={{
@@ -78,15 +97,22 @@ const JobDetails = () => {
                             }}
                         >
                             <Company
-                                companyLogo={data[0].employer_logo}
-                                jobTitle={data[0].job_title}
-                                companyName={data[0].employer_name}
-                                location={data[0].employer_country}
+                                companyLogo={data[0]?.employer_logo}
+                                jobTitle={data[0]?.job_title}
+                                companyName={data[0]?.employer_name}
+                                location={data[0]?.employer_country}
                             />
-                            <JobAbout job={data.job} />
-                            <JobTabs />
-                            <Specifics specifics={data.specifics} />
-                            {/* <jobFooter /> */}
+                            <JobTabs
+                                tabs={tabs}
+                                activeTab={activeTab}
+                                setActiveTab={setActiveTab}
+                            />
+                            {displayTabContent(
+                                activeTab,
+                                data[0]?.job_description ?? "No data provided",
+                                data[0]?.job_highlights.Qualifications ?? ["N/A"],
+                                data[0]?.job_responsibilities.Responsibilities ?? ["N/A"]
+                            )}
                         </View>
                     )}
                 </ScrollView>
