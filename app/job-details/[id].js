@@ -12,6 +12,7 @@ import { useCallback, useState } from "react";
 import {
     Company,
     JobAbout,
+    JobFooter,
     jobFooter,
     JobTabs,
     ScreenHeaderBtn,
@@ -87,8 +88,6 @@ const JobDetails = () => {
                 >
                     {loading ? (
                         <ActivityIndicator size="large" color={COLORS.primary} />
-                    ) : error ? (
-                        <Text>{error.message}</Text>
                     ) : (
                         <View
                             style={{
@@ -116,6 +115,7 @@ const JobDetails = () => {
                         </View>
                     )}
                 </ScrollView>
+                <JobFooter url={data[0]?.job_google_link ?? "https://www.google.com"} />
             </>
         </SafeAreaView>
     );
